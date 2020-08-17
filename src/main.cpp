@@ -80,6 +80,19 @@ Point pointTemp("temperature");
 
 void loop() {
 
+  // Make sure if we lose WiFi connection, we attempt to reconnect before continueing:
+  if (!WiFi.isConnected()) {
+    Serial.println("WiFi not connected, attempting to reconnect...");
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
+      delay(500);
+      Serial.print('.');
+    }
+
+    Serial.println("... connected, yey!");
+  }
+
   // // locate devices on the bus
   // Serial.print("Locating devices...");
   // Serial.print("Found ");
