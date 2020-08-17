@@ -31,6 +31,33 @@ InfluxDBClient client(INFLUXDB_URL, INFLUXDB_DB_NAME);
 // Data point
 Point pointDevice("device_status");
 
+/**
+ * Write the configuration settings of the current wifi to influxdb
+ **/
+void sendWiFiStatus() {
+  pointDevice.clearFields();
+  pointDevice.clearTags();
+
+  // Add tags
+  pointDevice.addTag("device", DEVICE);
+  pointDevice.addTag("SSID", WiFi.SSID());
+  // Add data
+  pointDevice.addField("rssi", WiFi.RSSI());
+  pointDevice.addField("uptime", millis());
+
+  // Check server connection
+  if (client.validateConnection()) {
+    Serial.print("Connected to InfluxDB: ");
+    Serial.println(client.getServerUrl());
+  } else {
+    Serial.print("InfluxDB connection failed: ");
+    Serial.println(client.getLastErrorMessage());
+  }
+
+  // Write data
+  client.writePoint(pointDevice);
+}
+
 void setup() {
   // put your setup code here, to run once:
   // Serial.begin(115200);
@@ -56,24 +83,7 @@ void setup() {
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
 
-  // Add tags
-  pointDevice.addTag("device", DEVICE);
-  pointDevice.addTag("SSID", WiFi.SSID());
-  // Add data
-  pointDevice.addField("rssi", WiFi.RSSI());
-  pointDevice.addField("uptime", millis());
-
-  // Check server connection
-  if (client.validateConnection()) {
-    Serial.print("Connected to InfluxDB: ");
-    Serial.println(client.getServerUrl());
-  } else {
-    Serial.print("InfluxDB connection failed: ");
-    Serial.println(client.getLastErrorMessage());
-  }
-
-  // Write data
-  client.writePoint(pointDevice);
+  sendWiFiStatus();
 }
 
 Point pointTemp("temperature");
@@ -89,6 +99,8 @@ void loop() {
       delay(500);
       Serial.print('.');
     }
+
+    sendWiFiStatus();
 
     Serial.println("... connected, yey!");
   }
