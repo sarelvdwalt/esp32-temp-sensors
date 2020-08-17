@@ -94,6 +94,13 @@ void loop() {
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
   float temperatureF = sensors.getTempFByIndex(0);
+
+  // On cold boot, he sensors are sometimes not calibrated properly and will return bogus data to inform us that it's having trouble.
+  if (temperatureC == 25.00) {
+    Serial.println("Sensur uncalibrated... skipping...");
+    sleep(1); // sleep 1 second
+    return; // break out of the loop
+  }
   
   Serial.print(temperatureC);
   Serial.println("ºC");
