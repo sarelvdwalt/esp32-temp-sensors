@@ -18,13 +18,6 @@ OneWire oneWire(oneWireBus);
 // Pass our oneWire reference to Dallas Temperature sensor 
 DallasTemperature sensors(&oneWire);
 
-// InfluxDB  server url. Don't use localhost, always server name or ip address.
-// For InfluxDB 2 e.g. http://192.168.1.48:9999 (Use: InfluxDB UI -> Load Data -> Client Libraries), 
-// For InfluxDB 1 e.g. http://192.168.1.48:8086
-#define INFLUXDB_URL "http://192.168.1.33:8086"
-
-#define INFLUXDB_DB_NAME "esp32"
-
 // Single InfluxDB instance
 InfluxDBClient client(INFLUXDB_URL, INFLUXDB_DB_NAME);
 
